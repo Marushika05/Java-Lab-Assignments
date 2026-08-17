@@ -1,171 +1,200 @@
-import java.util.Scanner;
-//online food delivery that manages types odf orders
-//need to make packages and classes
+// online food delivery that manages types of orders
+// need to make packages and classes
 
-//creating abstract class
-abstract class FoodOrder{
+// creating abstract class
+abstract class FoodOrder {
+
     private int orderid;
     private String customername;
-    private double ammount;
+    private double amount;
 
+    // static member
+    private static String restroname = "FoodBazaar";
 
-//static memeber
-private static String restroname="FoodBazaar";
+    // static object counter
+    private static int totalorders = 0;
 
-//static obj counter
-private static int totalorders=0;
+    // constructor
+    public FoodOrder(int orderid, String customername, double amount) {
+        this.orderid = orderid;
+        this.customername = customername;
+        this.amount = amount;
+        totalorders++;
+    }
 
-//constuctor
-public FoodOrder(int orderid, String customername, double ammount){
-    this.orderid=orderid;
-    this.customername=customername;
-    this.amount=amount;
-    totalorders++;
-}
-//getters and setters
-public int getorderid(){
-    return orderid;
+    // getters and setters
+    public int getorderid() {
+        return orderid;
+    }
 
-}
+    public void setorderid(int orderid) {
+        this.orderid = orderid;
+    }
 
-public void setorderid(int orderid){
-    this.orderid=orderid;
-}
+    public String getcustomername() {
+        return customername;
+    }
 
-public String getcustomername(){
-    return customername;
-}
+    public void setcustomername(String customername) {
+        this.customername = customername;
+    }
 
-public void setcustomername(String customername){
-    this.customername=customername;
-}
+    public double getamount() {
+        return amount;
+    }
 
-public double getamount(){
-return amount;
-}
+    public void setamount(double amount) {
+        this.amount = amount;
+    }
 
-public void setamount(double amount){
-    this.amount=amount;
-}
+    public static String getrestroname() {
+        return restroname;
+    }
 
-public static getrestroname(){
-    return restroname;
-}
+    public static void setrestroname(String restroname) {
+        FoodOrder.restroname = restroname;
+    }
 
-public static void setrestroname(string restroname){
-    FoodOrder.restroname=restroname;
-    //since its a static member thus we need class to call it as static belongs to class;
-}
+    // abstract method
+    public abstract double calc_deli_charge();
 
-//abstract method
-public abstract double calc_deli_charge();//delivery charge
-
-//static method
-public static void display_total_order(){
-    System.out.println("Total orders created: "+totalorders);
-}
-
+    // static method
+    public static void display_total_order() {
+        System.out.println("Total orders created: " + totalorders);
+    }
 }
 
-//creatinginterface
-interface Discountable{
+
+// creating interface
+interface Discountable {
     double applydisc();
 }
 
-//regular order
-class RegularOrder extends FoodOrder implements Discountable{
-    public RegularOrder(int orderid, String customername, double amount){
-        super(orderid,customername,amount);
+
+// Regular order
+class RegularOrder extends FoodOrder {
+
+    public RegularOrder(int orderid, String customername, double amount) {
+        super(orderid, customername, amount);
     }
 
-    //d3livery charge =80/-
-
+    // delivery charge = 80
     @Override
-    public double calc_deli_charge(){
+    public double calc_deli_charge() {
         return 80;
     }
 
-    //discount 10 percent
-    @Override
-    public double applydisc(){
-        return getamount()*0.10;
+    // discount = 10 percent
+    public double applydisc() {
+        return getamount() * 0.10;
     }
 }
 
-//Premium order
-class PremiumOrder extends FoodOrder implements Discountable{
-    public PremiumOrder(int orderid, String customername, double amount){
-        super(orderid,customername,amount);
+
+// Premium order
+class PremiumOrder extends FoodOrder {
+
+    public PremiumOrder(int orderid, String customername, double amount) {
+        super(orderid, customername, amount);
     }
 
-    //d3livery charge =80/-
-
+    // delivery charge = 50
     @Override
-    public double calc_deli_charge(){
+    public double calc_deli_charge() {
         return 50;
     }
 
-    //discount 10 percent
-    @Override
-    public double applydisc(){
-        return getamount()*0.15;
+    // discount = 15 percent
+    public double applydisc() {
+        return getamount() * 0.15;
     }
 }
 
-//utility class
-class OrderUtility{
-    //vlaidate amount
-    public static boolean validate_amt(double amount){
-        return amount>0;
+
+// Utility class
+class OrderUtility {
+
+    // validate amount
+    public static boolean validate_amt(double amount) {
+        return amount > 0;
     }
 
-    //val customername
-    public static boolean validate_customer_name(String name){
-        return name!=null && !name.trim().isEmpty();
+    // validate customer name
+    public static boolean validate_customer_name(String name) {
+        return name != null && !name.trim().isEmpty();
     }
 
-    //generate order summary 
-    public static void gen_ord_summary(FoodOrder order)
-    {
-        double discount=((Discountable)order).applydisc();
-        double delicharge=order.calc_deli_charge();
-        double finalamount=order.getamount()-discount+delicharge;
- //sysytem p[rint commands
- 
+    // generate order summary
+    public static void gen_ord_summary(FoodOrder order) {
+
+        double discount;
+
+        if (order instanceof RegularOrder) {
+            discount = order.getamount() * 0.10;
+        } else {
+            discount = order.getamount() * 0.15;
+        }
+
+        double delicharge = order.calc_deli_charge();
+
+        double finalamount =
+                order.getamount() - discount + delicharge;
+
+        System.out.println("--------------------------------------------");
+        System.out.println("Order ID        : " + order.getorderid());
+        System.out.println("Customer Name   : " + order.getcustomername());
+        System.out.println("Amount          : Rs. " + order.getamount());
+        System.out.println("Discount        : Rs. " + discount);
+        System.out.println("Delivery Charge : Rs. " + delicharge);
+        System.out.println("Final Payable   : Rs. " + finalamount);
+        System.out.println("--------------------------------------------");
     }
 }
 
-//driver class
-public class Main{
-    public static void main (String[] args){
-        //cretae an array of food orders
 
-        FoodOrder[] orders =new FoodOrder[6];
+// Driver class
+public class Main {
 
-        //creating new orders
-        // order[0]=
+    public static void main(String[] args) {
 
-        ///print cmd
-        
+        // create an array of FoodOrder
+        FoodOrder[] orders = new FoodOrder[6];
 
-    //display bill for every roder
-    for(FoodOrder order :orders){
-        if(!OrderUtility.validate_customer_name(order.getcustomername())){
-            System.err.println("Invalid Custoemr name");
-            continue;
+        // creating six orders
+        orders[0] = new RegularOrder(101, "Rahul", 500);
+        orders[1] = new PremiumOrder(102, "Priya", 1200);
+        orders[2] = new RegularOrder(103, "Aman", 800);
+        orders[3] = new PremiumOrder(104, "Neha", 1500);
+        orders[4] = new RegularOrder(105, "Karan", 650);
+        orders[5] = new PremiumOrder(106, "Simran", 2000);
+
+        // display restaurant
+        System.out.println("============================================");
+        System.out.println("             " + FoodOrder.getrestroname());
+        System.out.println("============================================");
+
+        // display bill for every order
+        for (FoodOrder order : orders) {
+
+            if (!OrderUtility.validate_customer_name(
+                    order.getcustomername())) {
+
+                System.out.println("Invalid Customer Name");
+                continue;
+            }
+
+            if (!OrderUtility.validate_amt(order.getamount())) {
+
+                System.out.println("Invalid Amount");
+                continue;
+            }
+
+            // generate bill
+            OrderUtility.gen_ord_summary(order);
         }
 
-        if(!OrderUtility.validate_amt(order.getamount())){
-            System.err.println("Invalid Amount");
-            continue;
-        }
-
-        //generate bil
-        OrderUtility.gen_ord_summary(order);
-    }
-
-    //display total nu,bers of orders
-    System.out.println();
-    FoodOrder.display_total_order();
+        // display total number of orders
+        System.out.println();
+        FoodOrder.display_total_order();
     }
 }
